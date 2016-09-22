@@ -34,10 +34,10 @@ def wake_on_lan(macaddress):
         macaddress = macaddress.replace(sep, '')
     else:
         log('Incorrect MAC address format', macaddress)
- 
+
     # Pad the synchronization stream.
     data = ''.join(['FFFFFFFFFFFF', macaddress * 20])
-    send_data = '' 
+    send_data = ''
 
     # Split up the hex values and pack.
     for i in range(0, len(data), 2):
@@ -55,12 +55,12 @@ def log(title, message):
 
     # Pushbullet
     cmd(["/usr/local/Scripts/pushbullet.sh", title, hour + ": " + message])
-    
+
     # Log file
     file = open("/usr/local/Scripts/Logs/" + ((sys.argv[0]).split("/")[-1])[:-3] + ".txt", "a")
     file.write(date + " " + hour + ": " + title + ". " + message + "\n")
     file.close()
-    
+
 def cmd(args):
     output = subprocess.Popen(args, stdout=subprocess.PIPE)
     out = str(output.stdout.read())
@@ -68,40 +68,31 @@ def cmd(args):
 
 
 speakers = 11
-button = 40
-is_on = host_is_up(SERVER_HOST)
-
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(speakers, GPIO.OUT)
-GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.output(speakers, GPIO.LOW if is_on else GPIO.HIGH)
 
 
-try: 
+try:
+    # System has been turned on, wake PC and turn on speakers
+    GPIO.output(speakers, GPIO.LOW)
+    wake_on_lan(SERVER_MAC)
+    sleep(TURN_ON_DELAY)
+
+    # Start monitoring PC up state
     while True:
-        if not is_on:
-            # Wait for button input
-            GPIO.wait_for_edge(button, GPIO.FALLING)
-
-            # System has been turned on, wake PC and turn on speakers
-            is_on = True
-            wake_on_lan(SERVER_MAC)
-            GPIO.output(speakers, GPIO.LOW)
-
-            sleep(TURN_ON_DELAY)
+        if host_is_up(SERVER_HOST):
+            # PC is still active, sleep
+            sleep(POLL_TIME)
 
         else:
-            if host_is_up(SERVER_HOST):
-                # PC is still active, sleep 
-                sleep(POLL_TIME)
-
-            else:
+            sleep(3)
+            if not host_is_up(SERVER_HOST):
                 # PC is offline, turn speakers off
-                is_on = False
                 GPIO.output(speakers, GPIO.HIGH)
+                break
 
 except Exception, e:
     log("Speaker Control has been terminated", str(sys.exc_info()[0]))
-
+    GPIO.cleanup()
 
 GPIO.cleanup()
