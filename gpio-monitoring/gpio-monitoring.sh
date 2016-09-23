@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ### BEGIN INIT INFO
-# Provides:          speaker-control
+# Provides:          gpio-monitoring
 # Required-Start:    $remote_fs $syslog
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
@@ -10,9 +10,9 @@
 # Description:       Put a long description of the service here
 ### END INIT INFO
 
-DIR=/media/USB_8/home-automation/speaker-control
-DAEMON=$DIR/speaker_control.py
-DAEMON_NAME=speaker-control
+DIR=/media/USB_8/home-automation/gpio_monitoring
+DAEMON=$DIR/gpio_monitoring.py
+DAEMON_NAME=gpio-monitoring
 
 DAEMON_OPTS=""
 DAEMON_USER=root
