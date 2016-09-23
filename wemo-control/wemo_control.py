@@ -37,10 +37,10 @@ def wake_on_lan(macaddress):
         macaddress = macaddress.replace(sep, '')
     else:
         log('Incorrect MAC address format', macaddress)
- 
+
     # Pad the synchronization stream.
     data = ''.join(['FFFFFFFFFFFF', macaddress * 20])
-    send_data = '' 
+    send_data = ''
 
     # Split up the hex values and pack.
     for i in range(0, len(data), 2):
@@ -50,7 +50,7 @@ def wake_on_lan(macaddress):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
     sock.sendto(send_data, ('<broadcast>', 7))
-        
+
 def log(title, message):
     now = datetime.now()
     date = str(now.year) + "/" + str(now.month) + "/" + str(now.day)
@@ -58,12 +58,12 @@ def log(title, message):
 
     # Pushbullet
     cmd(["/usr/local/Scripts/pushbullet.sh", title, hour + ": " + message])
-    
+
     # Log file
     file = open("/usr/local/Scripts/Logs/" + ((sys.argv[0]).split("/")[-1])[:-3] + ".txt", "a")
     file.write(date + " " + hour + ": " + title + ". " + message + "\n")
     file.close()
-    
+
 def cmd(args):
     output = subprocess.Popen(args, stdout=subprocess.PIPE)
     out = str(output.stdout.read())
@@ -81,7 +81,18 @@ class PC(debounce_handler):
         print "State", state, "from client @", client_address
 
         if (state):
-            wake_on_lan(SERVER_MAC)
+            # Check if speaker_control service is running
+            status = cmd(["sudo", "/etc/init.d/speaker-control.sh", "status"])
+            running = False
+            for line in status:
+                if ("Active: " in line):
+                    if "active (running)" in line:
+                        running = True
+                    break
+
+            if not running:
+                cmd(["sudo", "/etc/init.d/speaker-control.sh", "restart"])
+
         else:
             cmd(["net", "rpc", "shutdown", "-t", "30", "-I", SERVER_IP, "-U", USERNAME + "%" + PASSWORD])
 

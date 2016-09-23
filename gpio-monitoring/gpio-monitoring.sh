@@ -10,7 +10,7 @@
 # Description:       Put a long description of the service here
 ### END INIT INFO
 
-DIR=/media/USB_8/home-automation/gpio_monitoring
+DIR=/media/USB_8/home-automation/gpio-monitoring
 DAEMON=$DIR/gpio_monitoring.py
 DAEMON_NAME=gpio-monitoring
 
