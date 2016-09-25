@@ -12,19 +12,6 @@ def cmd(args):
     return out.split("\n")
 
 
-def speaker_button_pressed():
-    # Check if speaker_control service is running
-    status = cmd(["sudo", "/etc/init.d/speaker-control.sh", "status"])
-    running = False
-    for line in status:
-        if ("Active: " in line):
-            if "active (running)" in line:
-                running = True
-            break
-
-    if not running:
-        cmd(["sudo", "/etc/init.d/speaker-control.sh", "restart"])
-
 speaker_button = 40
 
 GPIO.setmode(GPIO.BOARD)
@@ -35,12 +22,21 @@ try:
         # Wait for button input
         GPIO.wait_for_edge(speaker_button, GPIO.FALLING)
 
-        speaker_button_pressed()
+        # Button press, try to initiate spaker-control
+        status = cmd(["sudo", "/etc/init.d/speaker-control.sh", "status"])
+        running = False
+        for line in status:
+            if ("Active: " in line):
+                running = "active (running)" in line
+                break
+
+        if not running:
+            cmd(["sudo", "/etc/init.d/speaker-control.sh", "restart"])
+            
         sleep(1)
 
 except Exception, e:
     GPIO.cleanup()
-
 
 GPIO.cleanup()
 

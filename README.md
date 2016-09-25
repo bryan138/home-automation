@@ -1,5 +1,5 @@
-# home-automation
-Basic set of script intended to provide home automation services using Alexa, Raspberry Pi and other technologies
+# Home Automation
+Basic set of script intended to provide home automation functionality using Alexa, Raspberry Pi and other technologies
 
 ## Modules
 

@@ -6,8 +6,8 @@
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Put a short description of the service here
-# Description:       Put a long description of the service here
+# Short-Description: Speaker set control
+# Description:       Speaker set control
 ### END INIT INFO
 
 DIR=/media/USB_8/home-automation/speaker-control

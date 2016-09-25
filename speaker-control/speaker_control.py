@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-
 import os
 import sys
 import socket
@@ -16,7 +15,7 @@ from datetime import datetime, time
 SERVER_MAC = "74:D4:35:F3:D6:6C"
 SERVER_HOST = 25
 
-POLL_TIME = 30
+POLL_TIME = 60
 TURN_ON_DELAY = 60 * 2
 
 

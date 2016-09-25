@@ -58,14 +58,14 @@ class PC(debounce_handler):
             running = False
             for line in status:
                 if ("Active: " in line):
-                    if "active (running)" in line:
-                        running = True
+                    running = "active (running)" in line
                     break
 
             if not running:
                 cmd(["sudo", "/etc/init.d/speaker-control.sh", "restart"])
 
         else:
+            # Turn off PC
             cmd(["net", "rpc", "shutdown", "-t", "30", "-I", SERVER_IP, "-U", USERNAME + "%" + PASSWORD])
 
         return True
