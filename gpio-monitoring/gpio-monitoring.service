@@ -1,0 +1,9 @@
+[Unit]
+Description=Constant button press detection
+
+[Service]
+Type=simple
+ExecStart=/home/osmc/code/home-automation/gpio-monitoring/gpio_monitoring.py
+
+[Install]
+WantedBy=multi-user.target

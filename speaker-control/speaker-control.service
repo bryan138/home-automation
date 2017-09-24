@@ -1,0 +1,6 @@
+[Unit]
+Description=Keeps speaker alive until PC is turned off
+
+[Service]
+Type=simple
+ExecStart=/home/osmc/code/home-automation/speaker-control/speaker_control.py

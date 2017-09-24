@@ -1,0 +1,9 @@
+[Unit]
+Description=WeMo device emulation for use with Alexa
+
+[Service]
+Type=simple
+ExecStart=/home/osmc/code/home-automation/wemo-control/wemo_control.py
+
+[Install]
+WantedBy=multi-user.target
