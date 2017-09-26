@@ -20,7 +20,7 @@ from debounce_handler import debounce_handler
 
 USERNAME = "username"
 PASSWORD = "password"
-SERVER_IP = "192.168.0.25"
+SERVER_IP = "192.168.1.101"
 
 
 def log(title, message):
@@ -50,23 +50,30 @@ class PC(debounce_handler):
         self.port = 52000
 
     def act(self, client_address, state):
-        print "State", state, "from client @", client_address
+        print "PC: State", state, "from client @", client_address
 
         if (state):
-            # Check if speaker_control service is running
-            status = cmd(["sudo", "/etc/init.d/speaker-control.sh", "status"])
-            running = False
-            for line in status:
-                if ("Active: " in line):
-                    running = "active (running)" in line
-                    break
-
-            if not running:
-                cmd(["sudo", "/etc/init.d/speaker-control.sh", "restart"])
-
+            # Wake on lan
+            cmd(["sudo", "python", "/home/osmc/code/wake_on_lan.py"])
         else:
             # Turn off PC
             cmd(["net", "rpc", "shutdown", "-t", "30", "-I", SERVER_IP, "-U", USERNAME + "%" + PASSWORD])
+
+        return True
+
+class Speaker(debounce_handler):
+    def __init__(self):
+        super(Speaker, self).__init__()
+        self.name = "Speakers"
+        self.port = 52001
+
+    def act(self, client_address, state):
+        print "Speaker: State", state, "from client @", client_address
+
+        if (state):
+            cmd(["sudo", "python", "/home/osmc/code/home-automation/gpio_write.py", "8", "0"])
+        else:
+            cmd(["sudo", "python", "/home/osmc/code/home-automation/gpio_write.py", "8", "1"])
 
         return True
 
@@ -84,6 +91,8 @@ if __name__ == "__main__":
     # Register devices
     pc = PC()
     fauxmo.fauxmo(pc.name, u, p, None, pc.port, pc)
+    speaker = Speaker()
+    fauxmo.fauxmo(speaker.name, u, p, None, speaker.port, speaker);
 
     # Loop and poll for incoming Echo requests
     logging.debug("Entering fauxmo polling loop")
