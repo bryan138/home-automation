@@ -77,6 +77,38 @@ class Speaker(debounce_handler):
 
         return True
 
+class TV(debounce_handler):
+    def __init__(self):
+        super(TV, self).__init__()
+        self.name = "TV"
+        self.port = 52002
+
+    def act(self, client_address, state):
+        print "TV: State", state, "from client @", client_address
+
+        if (state):
+            cmd(["echo", "on", "|", "cec-client", "-s", "-d", "1"])
+        else:
+            cmd(["echo", "standby", "|", "cec-client", "-s", "-d", "1"])
+
+        return True
+
+class Input(debounce_handler):
+    def __init__(self):
+        super(Input, self).__init__()
+        self.name = "Input"
+        self.port = 52003
+
+    def act(self, client_address, state):
+        print "Input: State", state, "from client @", client_address
+
+        if (state):
+            cmd(["echo", "'tx", "2F:82:10:00'", "|", "cec-client", "-s", "-d", "1"])
+        else:
+            cmd(["echo", "'tx", "2F:82:20:00'", "|", "cec-client", "-s", "-d", "1"])
+
+        return True
+
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -93,6 +125,10 @@ if __name__ == "__main__":
     fauxmo.fauxmo(pc.name, u, p, None, pc.port, pc)
     speaker = Speaker()
     fauxmo.fauxmo(speaker.name, u, p, None, speaker.port, speaker);
+    tv = TV()
+    fauxmo.fauxmo(tv.name, u, p, None, tv.port, tv);
+    inp = Input()
+    fauxmo.fauxmo(inp.name, u, p, None, inp.port, inp);
 
     # Loop and poll for incoming Echo requests
     logging.debug("Entering fauxmo polling loop")
