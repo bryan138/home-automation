@@ -14,12 +14,13 @@ from datetime import datetime, time
 import fauxmo
 import logging
 import time
+import wol_credentials
 
 from debounce_handler import debounce_handler
 
 
-USERNAME = "username"
-PASSWORD = "password"
+USERNAME = wol_credentials.username
+PASSWORD = wol_credentials.password
 SERVER_IP = "192.168.1.101"
 
 
