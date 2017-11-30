@@ -50,7 +50,7 @@ class PC(debounce_handler):
         self.port = 52000
 
     def act(self, client_address, state):
-        print "PC: State", state, "from client @", client_address
+        logging.debug("PC: State", state, "from client @", client_address)
 
         if (state):
             # Wake on lan
@@ -68,7 +68,7 @@ class Speaker(debounce_handler):
         self.port = 52001
 
     def act(self, client_address, state):
-        print "Speaker: State", state, "from client @", client_address
+        logging.debug("Speaker: State", state, "from client @", client_address)
 
         if (state):
             cmd("sudo python /home/osmc/code/home-automation/gpio_write.py 8 0")
@@ -84,16 +84,16 @@ class TV(debounce_handler):
         self.port = 52002
 
     def act(self, client_address, state):
-        print "TV: State", state, "from client @", client_address
+        logging.debug("TV: State", state, "from client @", client_address)
 
         if (state):
             echo = subprocess.Popen("echo on 0".split(), stdout=subprocess.PIPE)
-            cec = subprocess.Popen("cec-client -s -d 1".split(), stdin=echo.stdout, stdout=subprocess.PIPE)
-            print cec.communicate()[0]
+            cec = subprocess.Popen("/usr/osmc/bin/cec-client -s -d 1".split(), stdin=echo.stdout, stdout=subprocess.PIPE)
+            logging.debug(cec.communicate()[0])
         else:
             echo = subprocess.Popen("echo standby 0".split(), stdout=subprocess.PIPE)
-            cec = subprocess.Popen("cec-client -s -d 1".split(), stdin=echo.stdout, stdout=subprocess.PIPE)
-            print cec.communicate()[0]
+            cec = subprocess.Popen("/usr/osmc/bin/cec-client -s -d 1".split(), stdin=echo.stdout, stdout=subprocess.PIPE)
+            logging.debug(cec.communicate()[0])
 
         return True
 
@@ -104,16 +104,16 @@ class Input(debounce_handler):
         self.port = 52003
 
     def act(self, client_address, state):
-        print "Input: State", state, "from client @", client_address
+        logging.debug("Input: State", state, "from client @", client_address)
 
         if (state):
             echo = subprocess.Popen("echo tx 2F:82:10:00".split(), stdout=subprocess.PIPE)
-            cec = subprocess.Popen("cec-client -s -d 1".split(), stdin=echo.stdout, stdout=subprocess.PIPE)
-            print cec.communicate()[0]
+            cec = subprocess.Popen("/usr/osmc/bin/cec-client -s -d 1".split(), stdin=echo.stdout, stdout=subprocess.PIPE)
+            logging.debug(cec.communicate()[0])
         else:
             echo = subprocess.Popen("echo tx 2F:82:20:00".split(), stdout=subprocess.PIPE)
-            cec = subprocess.Popen("cec-client -s -d 1".split(), stdin=echo.stdout, stdout=subprocess.PIPE)
-            print cec.communicate()[0]
+            cec = subprocess.Popen("/usr/osmc/bin/cec-client -s -d 1".split(), stdin=echo.stdout, stdout=subprocess.PIPE)
+            logging.debug(cec.communicate()[0])
 
         return True
 
