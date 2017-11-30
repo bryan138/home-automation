@@ -37,7 +37,7 @@ def log(title, message):
     file.close()
 
 def cmd(arg):
-    output = subprocess.Popen(arg, shell=True, stdout=subprocess.PIPE)
+    output = subprocess.Popen(arg.split(), stdout=subprocess.PIPE)
     out = str(output.communicate()[0])
     return out.split("\n")
 
@@ -87,9 +87,13 @@ class TV(debounce_handler):
         print "TV: State", state, "from client @", client_address
 
         if (state):
-            cmd("echo 'on 0' | cec-client -s -d 1")
+            echo = subprocess.Popen("echo on 0".split(), stdout=subprocess.PIPE)
+            cec = subprocess.Popen("cec-client -s -d 1".split(), stdin=echo.stdout, stdout=subprocess.PIPE)
+            print cec.communicate()[0]
         else:
-            cmd("echo 'standby 0' | cec-client -s -d 1")
+            echo = subprocess.Popen("echo standby 0".split(), stdout=subprocess.PIPE)
+            cec = subprocess.Popen("cec-client -s -d 1".split(), stdin=echo.stdout, stdout=subprocess.PIPE)
+            print cec.communicate()[0]
 
         return True
 
@@ -103,9 +107,13 @@ class Input(debounce_handler):
         print "Input: State", state, "from client @", client_address
 
         if (state):
-            cmd("echo 'tx 2F:82:10:00' | cec-client -s -d 1")
+            echo = subprocess.Popen("echo tx 2F:82:10:00".split(), stdout=subprocess.PIPE)
+            cec = subprocess.Popen("cec-client -s -d 1".split(), stdin=echo.stdout, stdout=subprocess.PIPE)
+            print cec.communicate()[0]
         else:
-            cmd("echo 'tx 2F:82:20:00' | cec-client -s -d 1")
+            echo = subprocess.Popen("echo tx 2F:82:20:00".split(), stdout=subprocess.PIPE)
+            cec = subprocess.Popen("cec-client -s -d 1".split(), stdin=echo.stdout, stdout=subprocess.PIPE)
+            print cec.communicate()[0]
 
         return True
 
