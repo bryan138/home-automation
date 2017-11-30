@@ -29,16 +29,16 @@ def log(title, message):
     hour = str(now.hour) + ":" + str(now.minute) + ":" + str(now.second)
 
     # Pushbullet
-    cmd(["/usr/local/Scripts/pushbullet.sh", title, hour + ": " + message])
+    cmd("/usr/local/Scripts/pushbullet.sh " + title + " " + hour + ": " + message)
 
     # Log file
     file = open("/usr/local/Scripts/Logs/" + ((sys.argv[0]).split("/")[-1])[:-3] + ".txt", "a")
     file.write(date + " " + hour + ": " + title + ". " + message + "\n")
     file.close()
 
-def cmd(args):
-    output = subprocess.Popen(args, stdout=subprocess.PIPE)
-    out = str(output.stdout.read())
+def cmd(arg):
+    output = subprocess.Popen(arg, shell=True, stdout=subprocess.PIPE)
+    out = str(output.communicate()[0])
     return out.split("\n")
 
 
@@ -54,10 +54,10 @@ class PC(debounce_handler):
 
         if (state):
             # Wake on lan
-            cmd(["sudo", "python", "/home/osmc/code/wake_on_lan.py"])
+            cmd("sudo python /home/osmc/code/wake_on_lan.py")
         else:
             # Turn off PC
-            cmd(["net", "rpc", "shutdown", "-t", "30", "-I", SERVER_IP, "-U", USERNAME + "%" + PASSWORD])
+            cmd("net rpc shutdown -t 30 -I " + SERVER_IP + " -U " + USERNAME + "%" + PASSWORD)
 
         return True
 
@@ -71,9 +71,9 @@ class Speaker(debounce_handler):
         print "Speaker: State", state, "from client @", client_address
 
         if (state):
-            cmd(["sudo", "python", "/home/osmc/code/home-automation/gpio_write.py", "8", "0"])
+            cmd("sudo python /home/osmc/code/home-automation/gpio_write.py 8 0")
         else:
-            cmd(["sudo", "python", "/home/osmc/code/home-automation/gpio_write.py", "8", "1"])
+            cmd("sudo python /home/osmc/code/home-automation/gpio_write.py 8 1")
 
         return True
 
@@ -87,9 +87,9 @@ class TV(debounce_handler):
         print "TV: State", state, "from client @", client_address
 
         if (state):
-            cmd(["echo", "'on", "0'", "|", "cec-client", "-s", "-d", "1"])
+            cmd("echo 'on 0' | cec-client -s -d 1")
         else:
-            cmd(["echo", "'standby", "0'", "|", "cec-client", "-s", "-d", "1"])
+            cmd("echo 'standby 0' | cec-client -s -d 1")
 
         return True
 
@@ -103,9 +103,9 @@ class Input(debounce_handler):
         print "Input: State", state, "from client @", client_address
 
         if (state):
-            cmd(["echo", "'tx", "2F:82:10:00'", "|", "cec-client", "-s", "-d", "1"])
+            cmd("echo 'tx 2F:82:10:00' | cec-client -s -d 1")
         else:
-            cmd(["echo", "'tx", "2F:82:20:00'", "|", "cec-client", "-s", "-d", "1"])
+            cmd("echo 'tx 2F:82:20:00' | cec-client -s -d 1")
 
         return True
 
