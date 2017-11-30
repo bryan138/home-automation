@@ -87,9 +87,9 @@ class TV(debounce_handler):
         print "TV: State", state, "from client @", client_address
 
         if (state):
-            cmd(["echo", "on", "|", "cec-client", "-s", "-d", "1"])
+            cmd(["echo", "'on", "0'", "|", "cec-client", "-s", "-d", "1"])
         else:
-            cmd(["echo", "standby", "|", "cec-client", "-s", "-d", "1"])
+            cmd(["echo", "'standby", "0'", "|", "cec-client", "-s", "-d", "1"])
 
         return True
 
